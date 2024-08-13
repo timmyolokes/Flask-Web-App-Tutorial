@@ -1,3 +1,6 @@
 flask
 Flask-SQLAlchemy
 flask-login
+gunicorn==20.1.0
+google-cloud-storage==1.42.0
+six==1.16.0

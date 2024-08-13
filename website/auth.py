@@ -3,6 +3,9 @@ from .models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db   ##means from __init__.py import db
 from flask_login import login_user, login_required, logout_user, current_user
+from flask import jsonify
+from google.cloud import storage  # Importing Google Cloud Storage
+import logging  # Import the logging module
 
 
 auth = Blueprint('auth', __name__)
@@ -55,8 +58,7 @@ def sign_up():
         elif len(password1) < 7:
             flash('Password must be at least 7 characters.', category='error')
         else:
-            new_user = User(email=email, first_name=first_name, password=generate_password_hash(
-                password1, method='sha256'))
+            new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='pbkdf2:sha256'))
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
@@ -64,3 +66,39 @@ def sign_up():
             return redirect(url_for('views.home'))
 
     return render_template("sign_up.html", user=current_user)
+
+@auth.route('/pubsub', methods=['POST'])
+def pubsub_handler():
+    # Verify the request came from Pub/Sub
+    if request.headers.get('Content-Type') == 'application/json':
+        data = request.json
+        # Process the Pub/Sub message
+        message = data.get('message', {})
+        # Log a message indicating the Pub/Sub message was received
+        logging.info('Pub/Sub message received: %s', message)
+        # Respond with a success message
+        return jsonify({'message': 'Pub/Sub message received'}), 200
+    else:
+        return 'Bad request', 400
+    
+""" storage_client = storage.Client()
+@auth.route('/upload_note', methods=['POST'])
+def upload_note():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
+
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'})
+
+    bucket_name = 'ece-428-mynotes'
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(file.filename)
+    blob.upload_from_file(file)
+
+    
+    # Log a message indicating the file upload was successful
+    logging.info('File uploaded successfully: %s', file.filename)
+
+    return jsonify({'message': 'File uploaded successfully'})
+     """
