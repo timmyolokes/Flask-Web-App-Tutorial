@@ -1,23 +1,3 @@
-# Flask Web App Tutorial
+# Watch GCP Integration Video Demo
 
-## Setup & Installation
-
-Make sure you have the latest version of Python installed.
-
-```bash
-git clone <repo-url>
-```
-
-```bash
-pip install -r requirements.txt
-```
-
-## Running The App
-
-```bash
-python main.py
-```
-
-## Viewing The App
-
-Go to `http://127.0.0.1:5000`
+[![Watch the video](https://i.pcmag.com/imagery/reviews/02yVL9f8Jw1atwoG6sgFZDH-7.fit_lim.size_1050x591.v1569482492.jpg)](https://youtu.be/jWS7luMaYEY)
